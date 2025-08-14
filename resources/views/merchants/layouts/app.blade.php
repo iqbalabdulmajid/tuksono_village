@@ -31,11 +31,6 @@
     <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="{{ asset('/admin_assets/css/style.css') }}" id="main-style-link">
     <link rel="stylesheet" href="{{ asset('/admin_assets/css/style-preset.css') }}">
-    <link rel="stylesheet" href="{{ asset('/admin_assets/css/style.css') }}" id="main-style-link">
-    <link rel="stylesheet" href="{{ asset('/admin_assets/css/style-preset.css') }}">
-
-    {{-- 👇 TAMBAHKAN SWEETALERT CSS DI SINI 👇 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <!-- [Head] end -->
@@ -50,18 +45,19 @@
     </div>
     <!-- [ Pre-loader ] End -->
     {{-- sidebar --}}
-    @include('admins.partials.sidebar')
+    @include('merchants.partials.sidebar')
     <!-- [ Sidebar ] end -->
     {{-- topbar --}}
 
-    @include('admins.partials.topbar')
+    @include('merchants.partials.topbar')
     {{-- end topbar --}}
+
+    {{-- main --}}
     <div class="pc-container">
-        {{-- main --}}
         @yield('content')
     </div>
     {{-- end main --}}
-    @include('admins.partials.footer')
+    @include('merchants.partials.footer')
     @stack('scripts')
     <!-- [Page Specific JS] start -->
     <script src="{{ asset('/admin_assets/js/plugins/apexcharts.min.js') }}"></script>
@@ -73,9 +69,6 @@
     <script src="{{ asset('/admin_assets/js/plugins/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/admin_assets/js/fonts/custom-font.js') }}"></script>
     <script src="{{ asset('/admin_assets/js/pcoded.js') }}"></script>
-    <script src="{{ asset('/admin_assets/js/plugins/feather.min.js') }}"></script>
-    <script src="{{ asset('/admin_assets/js/plugins/popper.min.js') }}"></script>
-    {{-- ... (semua script JS Anda yang lain) ... --}}
     <script src="{{ asset('/admin_assets/js/plugins/feather.min.js') }}"></script>
 
 

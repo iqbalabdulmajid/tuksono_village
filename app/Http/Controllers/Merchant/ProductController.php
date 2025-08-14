@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Http\Controllers\Merchant;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+
+class ProductController extends Controller
+{
+    /**
+     * Menampilkan daftar produk HANYA milik merchant yang sedang login.
+     */
+    public function index(Request $request)
+    {
+        // Memulai query dari produk milik user yang sedang login
+        $query = Auth::user()->products()->with('categories');
+
+        // Fungsionalitas Pencarian
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->latest()->paginate(10)->appends($request->query());
+
+        return view('merchants.products.index', compact('products'));
+    }
+
+    /**
+     * Menampilkan form untuk membuat produk baru.
+     */
+    public function create()
+    {
+        $categories = Category::all();
+        return view('merchants.products.create', compact('categories'));
+    }
+
+    /**
+     * Menyimpan produk baru ke database.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|string', // Divalidasi sebagai string karena ada format titik
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        // Membuat produk di bawah relasi user yang sedang login
+        $product = Auth::user()->products()->create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => str_replace('.', '', $request->price), // Hapus format titik sebelum simpan
+            'image' => $imagePath,
+        ]);
+
+        // Menghubungkan produk dengan kategori
+        if ($request->has('categories')) {
+            $product->categories()->attach($request->categories);
+        }
+
+        return redirect()->route('merchant.products.index')->with('success', 'Produk berhasil ditambahkan.');
+    }
+
+    /**
+     * Menampilkan detail satu produk.
+     */
+    public function show(Product $product)
+    {
+        // Validasi kepemilikan
+        if ($product->user_id !== Auth::id()) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
+        }
+
+        return view('merchants.products.show', compact('product'));
+    }
+
+    /**
+     * Menampilkan form untuk mengedit produk.
+     */
+    public function edit(Product $product)
+    {
+        // Validasi kepemilikan
+        if ($product->user_id !== Auth::id()) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
+        }
+
+        $categories = Category::all();
+        $product->load('categories');
+        return view('merchants.products.edit', compact('product', 'categories'));
+    }
+
+    /**
+     * Memperbarui data produk di database.
+     */
+    public function update(Request $request, Product $product)
+    {
+        // Validasi kepemilikan
+        if ($product->user_id !== Auth::id()) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
+        ]);
+
+        $imagePath = $product->image;
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => str_replace('.', '', $request->price),
+            'image' => $imagePath,
+        ]);
+
+        // Sinkronkan kategori
+        $product->categories()->sync($request->categories ?? []);
+
+        return redirect()->route('merchant.products.index')->with('success', 'Produk berhasil diperbarui.');
+    }
+
+    /**
+     * Menghapus produk dari database.
+     */
+    public function destroy(Product $product)
+    {
+        // Validasi kepemilikan
+        if ($product->user_id !== Auth::id()) {
+            abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
+        }
+
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+        $product->delete();
+
+        return redirect()->route('merchant.products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+}

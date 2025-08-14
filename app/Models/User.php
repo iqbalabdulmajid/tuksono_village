@@ -60,4 +60,8 @@ class User extends Authenticatable
     {
         return $this->role === 'pemilik_usaha';
     }
+     public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

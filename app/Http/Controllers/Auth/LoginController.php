@@ -29,7 +29,7 @@ class LoginController extends Controller
             case 'admin':
                 return route('admin.dashboard'); // Arahkan ke dashboard admin
             case 'pemilik_usaha':
-                return '/owner/dashboard'; // Arahkan ke dashboard pemilik usaha
+                return 'merchant.dashboard'; // Arahkan ke dashboard pemilik usaha
             default:
                 return '/'; // Arahkan pengguna biasa ke halaman utama
         }

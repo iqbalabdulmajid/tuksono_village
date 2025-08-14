@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Auth; // <-- 1. TAMBAHKAN IMPORT INI
 // =====================================================================
 // == User Routes (Akses umum)                                      ==
 // =====================================================================
-Route::get('/', [App\Http\Controllers\User\Dashboard::class, 'index'])->name('home');
-Route::get('/about', [App\Http\Controllers\User\About::class, 'index'])->name('about');
-Route::get('/product', [App\Http\Controllers\User\Product::class, 'index'])->name('product');
-Route::get('/blog', [App\Http\Controllers\User\Blog::class, 'index'])->name('blog');
-Route::get('/blog/show', [App\Http\Controllers\User\Blog::class, 'show'])->name('blog.show');
-Route::get('/product/show', [App\Http\Controllers\User\Product::class, 'show'])->name('product.show');
-Route::get('/contact', [App\Http\Controllers\User\Contact::class, 'index'])->name('contact');
+Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('home');
+Route::get('/about', [App\Http\Controllers\User\AboutController::class, 'index'])->name('about');
+Route::get('/product', [App\Http\Controllers\User\ProductController::class, 'index'])->name('product');
+Route::get('/blog', [App\Http\Controllers\User\BlogController::class, 'index'])->name('blog');
+Route::get('/blog/show', [App\Http\Controllers\User\BlogController::class, 'show'])->name('blog.show');
+// Route::get('/product/show', [App\Http\Controllers\User\ProductController::class, 'show'])->name('product.show');
+Route::get('/contact', [App\Http\Controllers\User\ContactController::class, 'index'])->name('contact');
+Route::controller(App\Http\Controllers\User\ProductController::class)->prefix('product')->name('product.')->group(function () {
+    Route::get('/{product}', 'show')->name('show');
+});
 // =====================================================================
 // == Admin Routes (Hanya bisa diakses oleh role 'admin')           ==
 // =====================================================================
 Auth::routes();
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // URL: /admin/dashboard, Name: admin.dashboard
-    Route::get('/dashboard', [App\Http\Controllers\Admin\Dashboard::class, 'index'])->name('dashboard');
-
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
     // Tambahkan route admin lainnya di sini, contoh:
     // Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
     // Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
@@ -30,20 +33,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // =====================================================================
 // == Pemilik Usaha Routes (Hanya bisa diakses oleh 'pemilik_usaha') ==
 // =====================================================================
-/*
-// Uncomment (aktifkan) blok ini jika Anda sudah siap menggunakannya.
-Route::middleware(['auth', 'role:pemilik_usaha'])->prefix('owner')->name('owner.')->group(function () {
 
-    // Contoh route untuk pemilik usaha:
-    // URL: /owner/dashboard, Name: owner.dashboard
-    // Route::get('/dashboard', [Owner\DashboardController::class, 'index'])->name('dashboard');
+// Grup route untuk Merchant (Pemilik Usaha)
+Route::middleware(['auth', 'role:pemilik_usaha'])->prefix('merchant')->name('merchant.')->group(function () {
 
-    // URL: /owner/reports, Name: owner.reports.index
-    // Route::get('/reports', [Owner\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/dashboard', [App\Http\Controllers\Merchant\DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('products', App\Http\Controllers\Merchant\ProductController::class);
 
+    // Tambahkan route merchant lainnya di sini
 });
-*/
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
