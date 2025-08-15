@@ -9,13 +9,24 @@ use Illuminate\Support\Facades\Auth; // <-- 1. TAMBAHKAN IMPORT INI
 Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('home');
 Route::get('/about', [App\Http\Controllers\User\AboutController::class, 'index'])->name('about');
 Route::get('/product', [App\Http\Controllers\User\ProductController::class, 'index'])->name('product');
-Route::get('/blog', [App\Http\Controllers\User\BlogController::class, 'index'])->name('blog');
-Route::get('/blog/show', [App\Http\Controllers\User\BlogController::class, 'show'])->name('blog.show');
-// Route::get('/product/show', [App\Http\Controllers\User\ProductController::class, 'show'])->name('product.show');
+Route::controller(App\Http\Controllers\User\BlogController::class)->prefix('blog')->name('blog.')->group(function () {
+    // URL: /blog
+    // Nama: blog.index
+    Route::get('/', 'index')->name('index');
+
+    // URL: /blog/{slug-artikel}
+    // Nama: blog.show
+    Route::get('/{post:slug}', 'show')->name('show');
+});// Route::get('/product/show', [App\Http\Controllers\User\ProductController::class, 'show'])->name('product.show');
 Route::get('/contact', [App\Http\Controllers\User\ContactController::class, 'index'])->name('contact');
 Route::controller(App\Http\Controllers\User\ProductController::class)->prefix('product')->name('product.')->group(function () {
     Route::get('/{product}', 'show')->name('show');
 });
+Route::post('/register/merchant', [App\Http\Controllers\Auth\RegisterController::class, 'createMerchant'])->name('register.merchant');
+Route::get('/store/{slug}', [App\Http\Controllers\User\MerchantController::class, 'showAllProducts'])->name('merchant.show');
+Route::post('/comments', [App\Http\Controllers\User\CommentController::class, 'store'])->name('comments.store')->middleware('auth');
+
+
 // =====================================================================
 // == Admin Routes (Hanya bisa diakses oleh role 'admin')           ==
 // =====================================================================
@@ -25,7 +36,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['create', 'store', 'show']);
-
+    Route::resource('posts', App\Http\Controllers\Admin\PostController::class); // <-- TAMBAHKAN INI
     // Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
 });
 

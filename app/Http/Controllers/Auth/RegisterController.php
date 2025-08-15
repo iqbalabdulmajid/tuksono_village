@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Merchant;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -69,4 +72,30 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+    public function createMerchant(Request $request)
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'nama_toko' => ['required', 'string', 'max:255', 'unique:merchants'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => 'pemilik_usaha', // Atur role langsung sebagai 'pemilik_usaha'
+    ]);
+
+    Merchant::create([
+        'user_id' => $user->id,
+        'nama_toko' => $request->nama_toko,
+        'slug' => Str::slug($request->nama_toko),
+        // Tambahkan kolom lain jika diperlukan
+    ]);
+
+    return redirect()->route('login')->with('success', 'Akun berhasil dibuat. Silakan login.');
+}
 }

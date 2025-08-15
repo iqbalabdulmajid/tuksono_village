@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -12,7 +15,23 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admins.dashboard.index');
+        // Menghitung total data
+        $totalProducts = Product::count();
+        $totalCategories = Category::count();
+        $totalUsers = User::where('role', 'user')->count();
+        $totalMerchants = User::where('role', 'pemilik_usaha')->count();
+
+        // Mengambil 5 produk terbaru untuk ditampilkan di tabel
+        $recentProducts = Product::with('owner')->latest()->take(5)->get();
+
+        // Mengirim semua data ke view
+        return view('admins.dashboard.index', compact(
+            'totalProducts',
+            'totalCategories',
+            'totalUsers',
+            'totalMerchants',
+            'recentProducts'
+        ));
     }
 
     /**

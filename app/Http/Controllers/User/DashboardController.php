@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -12,7 +13,11 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('users.dashboard.index');
+         $latestPosts = Post::whereNotNull('published_at')
+                            ->latest('published_at')
+                            ->take(3)
+                            ->get();
+        return view('users.dashboard.index', compact('latestPosts'));
     }
 
     /**

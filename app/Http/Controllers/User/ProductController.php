@@ -38,13 +38,20 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-    {
-        // Ambil produk serupa secara acak, kecuali produk yang sedang dilihat
+{
+    // Memuat relasi owner dan merchant sekaligus untuk menghindari N+1 problem
+    $product->load('owner.merchant', 'categories');
+    // dd($product->owner->merchant);
+    // Ambil produk serupa dari merchant yang sama
+    $similarProducts = collect();
+    if ($product->owner->merchant) {
         $similarProducts = Product::where('id', '!=', $product->id)
-                                ->inRandomOrder()
-                                ->limit(3)
-                                ->get();
-
-        return view('users.product.show', compact('product', 'similarProducts'));
+            ->where('id', $product->owner->merchant->id)
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
     }
+
+    return view('users.product.show', compact('product', 'similarProducts'));
+}
 }

@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\User;
+use App\Models\Merchant; // Menggunakan model Merchant yang baru
+use App\Models\User; // Masih diperlukan untuk filter user di index
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,54 +17,54 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    // Eager load relationships untuk efisiensi
-    $query = Product::with(['owner', 'categories']);
+    {
+        // Eager load relationships untuk efisiensi
+        $query = Product::with(['merchant', 'owner', 'categories']);
 
-    // Filter Pencarian
-    if ($request->filled('search')) {
-        $query->where('name', 'like', '%' . $request->search . '%');
+        // Filter Pencarian
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter berdasarkan Merchant (sekarang menggunakan merchant_id)
+        if ($request->filled('merchant_id')) {
+            $query->where('merchant_id', $request->merchant_id);
+        }
+
+        // Filter berdasarkan Kategori
+        if ($request->filled('category_id')) {
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->where('categories.id', $request->category_id);
+            });
+        }
+
+        // Logika Pengurutan
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDirection = $request->input('sort_direction', 'desc');
+        $sortableColumns = ['name', 'price', 'created_at'];
+        if (in_array($sortBy, $sortableColumns)) {
+            $query->orderBy($sortBy, $sortDirection);
+        } else {
+            $query->latest();
+        }
+
+        // Logika Pagination
+        $perPage = $request->input('per_page', 10);
+        $products = $query->paginate($perPage)->appends($request->query());
+
+        // Ambil data untuk dropdown filter
+        $merchants = Merchant::orderBy('nama_toko')->get();
+        $categories = Category::orderBy('name')->get();
+
+        return view('admins.products.index', compact('products', 'merchants', 'categories'));
     }
-
-    // Filter berdasarkan Merchant
-    if ($request->filled('merchant_id')) {
-        $query->where('user_id', $request->merchant_id);
-    }
-
-    // Filter berdasarkan Kategori
-    if ($request->filled('category_id')) {
-        $query->whereHas('categories', function ($q) use ($request) {
-            $q->where('categories.id', $request->category_id);
-        });
-    }
-
-    // Logika Pengurutan
-    $sortBy = $request->input('sort_by', 'created_at');
-    $sortDirection = $request->input('sort_direction', 'desc');
-    $sortableColumns = ['name', 'price', 'created_at'];
-    if (in_array($sortBy, $sortableColumns)) {
-        $query->orderBy($sortBy, $sortDirection);
-    } else {
-        $query->latest();
-    }
-
-    // Logika Pagination
-    $perPage = $request->input('per_page', 10);
-    $products = $query->paginate($perPage)->appends($request->query());
-
-    // Ambil data untuk dropdown filter
-    $merchants = User::where('role', 'pemilik_usaha')->orderBy('name')->get();
-    $categories = Category::orderBy('name')->get();
-
-    return view('admins.products.index', compact('products', 'merchants', 'categories'));
-}
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $merchants = User::where('role', 'pemilik_usaha')->get();
+        $merchants = Merchant::orderBy('nama_toko')->get();
         $categories = Category::all();
         return view('admins.products.create', compact('merchants', 'categories'));
     }
@@ -78,12 +79,13 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'categories' => 'nullable|array', // Validasi kategori
+            'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
             'link_shopee' => 'nullable|url',
             'link_tokopedia' => 'nullable|url',
             'link_fb_marketplace' => 'nullable|url',
             'link_tanihub' => 'nullable|url',
+            'merchant_id' => 'required|exists:merchants,id', // Validasi merchant_id
         ]);
 
         $imagePath = null;
@@ -91,19 +93,22 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
+        // Temukan user_id dari merchant_id yang dipilih
+        $merchant = Merchant::findOrFail($request->merchant_id);
+
         $product = Product::create([
-            'user_id' => $request->user_id, // Simpan user_id dari form
+            'user_id' => $merchant->user_id, // Simpan user_id dari merchant
+            'merchant_id' => $request->merchant_id, // Simpan merchant_id
             'name' => $request->name,
             'description' => $request->description,
             'price' => str_replace('.', '', $request->price),
             'image' => $imagePath,
-            'link_shopee' => $request['link_shopee'],
-            'link_tokopedia' => $request['link_tokopedia'],
-            'link_fb_marketplace' => $request['link_fb_marketplace'],
-            'link_tanihub' => $request['link_tanihub'],
+            'link_shopee' => $request->link_shopee,
+            'link_tokopedia' => $request->link_tokopedia,
+            'link_fb_marketplace' => $request->link_fb_marketplace,
+            'link_tanihub' => $request->link_tanihub,
         ]);
 
-        // Hubungkan produk dengan kategori yang dipilih
         if ($request->has('categories')) {
             $product->categories()->attach($request->categories);
         }
@@ -112,21 +117,12 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        return view('admins.products.show', compact('product'));
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Product $product)
     {
-         $merchants = User::where('role', 'pemilik_usaha')->get();
+        $merchants = Merchant::orderBy('nama_toko')->get();
         $categories = Category::all();
-        // Muat kategori yang sudah terhubung dengan produk ini
         $product->load('categories');
         return view('admins.products.edit', compact('product', 'merchants', 'categories'));
     }
@@ -147,6 +143,7 @@ class ProductController extends Controller
             'link_tokopedia' => 'nullable|url',
             'link_fb_marketplace' => 'nullable|url',
             'link_tanihub' => 'nullable|url',
+            'merchant_id' => 'required|exists:merchants,id', // Validasi merchant_id
         ]);
 
         $imagePath = $product->image;
@@ -157,19 +154,22 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
+        // Temukan user_id dari merchant_id yang dipilih
+        $merchant = Merchant::findOrFail($request->merchant_id);
+
         $product->update([
-            'user_id' => $request->user_id,
+            'user_id' => $merchant->user_id, // Perbarui user_id
+            'merchant_id' => $request->merchant_id, // Perbarui merchant_id
             'name' => $request->name,
             'description' => $request->description,
             'price' => str_replace('.', '', $request->price),
             'image' => $imagePath,
-            'link_shopee' => $request['link_shopee'],
-            'link_tokopedia' => $request['link_tokopedia'],
-            'link_fb_marketplace' => $request['link_fb_marketplace'],
-            'link_tanihub' => $request['link_tanihub'],
+            'link_shopee' => $request->link_shopee,
+            'link_tokopedia' => $request->link_tokopedia,
+            'link_fb_marketplace' => $request->link_fb_marketplace,
+            'link_tanihub' => $request->link_tanihub,
         ]);
 
-        // Sinkronkan kategori (hapus yang lama, tambahkan yang baru)
         $product->categories()->sync($request->categories ?? []);
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
@@ -185,5 +185,10 @@ class ProductController extends Controller
         }
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    public function show(Product $product)
+    {
+        return view('admins.products.show', compact('product'));
     }
 }

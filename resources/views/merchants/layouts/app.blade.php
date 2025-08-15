@@ -54,7 +54,9 @@
 
     {{-- main --}}
     <div class="pc-container">
-        @yield('content')
+        <div class="pc-content">
+            @yield('content')
+        </div>
     </div>
     {{-- end main --}}
     @include('merchants.partials.footer')

@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable
 {
@@ -47,7 +49,7 @@ class User extends Authenticatable
         ];
     }
 
-     public function isAdmin(): bool
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
@@ -61,10 +63,21 @@ class User extends Authenticatable
     {
         return $this->role === 'pemilik_usaha';
     }
-     public function products()
+    public function products()
     {
         return $this->hasMany(Product::class);
     }
 
-
+    // app/Models/User.php
+    public function merchant()
+    {
+        return $this->hasOne(\App\Models\Merchant::class);
+    }
+    /**
+     * Mendefinisikan relasi bahwa satu User bisa memiliki banyak Comment.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

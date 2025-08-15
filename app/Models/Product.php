@@ -12,6 +12,7 @@ class Product extends Model
 
     protected $fillable = [
         'user_id', // Pastikan user_id sudah ada di sini
+        'merchant_id', // Tambahkan merchant_id untuk relasi dengan Merchant
         'name',
         'description',
         'price',
@@ -32,4 +33,10 @@ class Product extends Model
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
+    }
+
 }

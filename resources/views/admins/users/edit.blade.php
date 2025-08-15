@@ -3,7 +3,6 @@
 @section('title', 'Edit Pengguna')
 
 @section('content')
-    <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
@@ -20,9 +19,6 @@
             </div>
         </div>
     </div>
-    <!-- [ breadcrumb ] end -->
-
-    <!-- [ Main Content ] start -->
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -52,7 +48,7 @@
                                 <option value="pemilik_usaha" @selected(old('role', $user->role) == 'pemilik_usaha')>Merchant</option>
                                 <option value="admin" @selected(old('role', $user->role) == 'admin')>Admin</option>
                             </select>
-                             @error('role')
+                            @error('role')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -64,5 +60,4 @@
             </div>
         </div>
     </div>
-    <!-- [ Main Content ] end -->
-@endsection
+    @endsection

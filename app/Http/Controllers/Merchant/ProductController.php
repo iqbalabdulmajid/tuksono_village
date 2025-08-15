@@ -17,8 +17,11 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // Memulai query dari produk milik user yang sedang login
-        $query = Auth::user()->products()->with('categories');
+        // Mengambil merchant_id dari user yang sedang login
+        $merchantId = Auth::user()->merchant->id;
+
+        // Memulai query dari produk milik merchant yang sedang login
+        $query = Product::where('merchant_id', $merchantId)->with('categories');
 
         // Fungsionalitas Pencarian
         if ($request->filled('search')) {
@@ -47,7 +50,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|string', // Divalidasi sebagai string karena ada format titik
+            'price' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
@@ -62,11 +65,15 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        // Membuat produk di bawah relasi user yang sedang login
-        $product = Auth::user()->products()->create([
+        // Ambil ID dari merchant yang sedang login
+        $merchant = Auth::user()->merchant;
+
+        $product = Product::create([
+            'user_id' => Auth::id(), // Simpan user_id
+            'merchant_id' => $merchant->id, // Simpan merchant_id
             'name' => $request->name,
             'description' => $request->description,
-            'price' => str_replace('.', '', $request->price), // Hapus format titik sebelum simpan
+            'price' => str_replace('.', '', $request->price),
             'image' => $imagePath,
             'link_shopee' => $request->link_shopee,
             'link_tokopedia' => $request->link_tokopedia,
@@ -74,7 +81,6 @@ class ProductController extends Controller
             'link_tanihub' => $request->link_tanihub,
         ]);
 
-        // Menghubungkan produk dengan kategori
         if ($request->has('categories')) {
             $product->categories()->attach($request->categories);
         }
@@ -87,8 +93,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // Validasi kepemilikan
-        if ($product->user_id !== Auth::id()) {
+        if ($product->merchant_id !== Auth::user()->merchant->id) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
         }
 
@@ -100,8 +105,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        // Validasi kepemilikan
-        if ($product->user_id !== Auth::id()) {
+        if ($product->merchant_id !== Auth::user()->merchant->id) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
         }
 
@@ -115,8 +119,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // Validasi kepemilikan
-        if ($product->user_id !== Auth::id()) {
+        if ($product->merchant_id !== Auth::user()->merchant->id) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
         }
 
@@ -152,7 +155,6 @@ class ProductController extends Controller
             'link_tanihub' => $request->link_tanihub,
         ]);
 
-        // Sinkronkan kategori
         $product->categories()->sync($request->categories ?? []);
 
         return redirect()->route('merchant.products.index')->with('success', 'Produk berhasil diperbarui.');
@@ -163,8 +165,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Validasi kepemilikan
-        if ($product->user_id !== Auth::id()) {
+        if ($product->merchant_id !== Auth::user()->merchant->id) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
         }
 

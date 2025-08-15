@@ -1,7 +1,6 @@
 @extends('merchants.layouts.app')
 @section('title', 'Edit Profil')
 @section('content')
-    <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
@@ -17,8 +16,6 @@
             </div>
         </div>
     </div>
-    <!-- [ breadcrumb ] end -->
-
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -43,20 +40,41 @@
                     <form action="{{ route('merchant.profile.update') }}" method="POST">
                         @csrf
                         @method('PUT')
+                        {{-- Field untuk Nama Pengguna --}}
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nama Toko / Merchant</label>
-                            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                            <label for="name" class="form-label">Nama Anda</label>
+                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
+                        {{-- Field untuk Nama Toko --}}
+                        <div class="mb-3">
+                            <label for="nama_toko" class="form-label">Nama Toko</label>
+                            <input type="text" name="nama_toko" id="nama_toko" class="form-control @error('nama_toko') is-invalid @enderror" value="{{ old('nama_toko', $user->merchant->nama_toko) }}" required>
+                            @error('nama_toko')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Field Email --}}
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" id="email" class="form-control" value="{{ $user->email }}" disabled>
                             <small class="text-muted">Email tidak dapat diubah.</small>
                         </div>
+
+                        {{-- Field Nomor WhatsApp --}}
                         <div class="mb-3">
                             <label for="whatsapp_number" class="form-label">Nomor WhatsApp</label>
-                            <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control" value="{{ old('whatsapp_number', $user->whatsapp_number) }}" placeholder="Contoh: 6281234567890">
+                            <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control @error('whatsapp_number') is-invalid @enderror" value="{{ old('whatsapp_number', $user->whatsapp_number) }}" placeholder="Contoh: 6281234567890">
                             <small class="text-muted">Awali dengan kode negara (62) tanpa tanda `+` atau `0` di depan.</small>
+                            @error('whatsapp_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <button type="submit" class="btn btn-primary">Update Profil</button>
                     </form>
                 </div>

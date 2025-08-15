@@ -3,63 +3,48 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a list of all blog posts.
      */
     public function index()
     {
-        return view('users.blog.index');
+        $posts = Post::with('author')
+            ->whereNotNull('published_at')
+            ->latest('published_at')
+            ->paginate(6); // Show 6 posts per page
+
+        $recentPosts = Post::whereNotNull('published_at')
+            ->latest('published_at')
+            ->take(5)
+            ->get();
+
+        return view('users.blog.index', compact('posts', 'recentPosts'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a single blog post.
      */
-    public function create()
+    public function show(Post $post)
     {
-        //
-    }
+        // Ensure only published posts can be viewed
+        if (!$post->published_at) {
+            abort(404);
+        }
+        $post->load(['comments.user']);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show()
-    {
-        return view('users.blog.show');
-    }
+        $recentPosts = Post::where('id', '!=', $post->id)
+            ->whereNotNull('published_at')
+            ->latest('published_at')
+            ->take(5)
+            ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('users.blog.show', compact('post', 'recentPosts'));
     }
 }

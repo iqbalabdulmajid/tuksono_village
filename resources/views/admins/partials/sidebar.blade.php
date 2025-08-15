@@ -42,7 +42,7 @@
                     </a>
                 </li>
                 <li class="pc-item">
-                    <a href="#"
+                    <a href="{{ route('admin.posts.index') }}"
                         class="pc-link {{ Route::is('admin.posts.*') ? 'active' : '' }}">
                         <span class="pc-micon"><i class="ti ti-pencil"></i></span>
                         <span class="pc-mtext">Blog</span>

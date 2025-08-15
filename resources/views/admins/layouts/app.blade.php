@@ -57,8 +57,10 @@
     @include('admins.partials.topbar')
     {{-- end topbar --}}
     <div class="pc-container">
+          <div class="pc-content">
         {{-- main --}}
         @yield('content')
+    </div>
     </div>
     {{-- end main --}}
     @include('admins.partials.footer')
