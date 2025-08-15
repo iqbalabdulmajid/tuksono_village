@@ -22,21 +22,26 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><h5>Form Edit Produk: {{ $product->name }}</h5></div>
+                <div class="card-header">
+                    <h5>Form Edit Produk: {{ $product->name }}</h5>
+                </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="product-form">
+                    <form action="{{ route('admin.products.update', $product->id) }}" method="POST"
+                        enctype="multipart/form-data" id="product-form">
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
                             <label for="name" class="form-label">Nama Produk</label>
-                            <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
+                            <input type="text" name="name" class="form-control"
+                                value="{{ old('name', $product->name) }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="user_id" class="form-label">Pemilik / Merchant</label>
                             <select name="user_id" id="user_id" class="form-select" required>
                                 <option value="">Pilih Merchant</option>
-                                @foreach($merchants as $merchant)
-                                    <option value="{{ $merchant->id }}" @selected(old('user_id', $product->user_id) == $merchant->id)>{{ $merchant->name }}</option>
+                                @foreach ($merchants as $merchant)
+                                    <option value="{{ $merchant->id }}" @selected(old('user_id', $product->user_id) == $merchant->id)>{{ $merchant->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -45,16 +50,11 @@
                         <div class="mb-3">
                             <label for="categories" class="form-label">Kategori</label>
                             <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
-                                @foreach($categories as $category)
+                                @foreach ($categories as $category)
                                     <div class="form-check">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               name="categories[]"
-                                               value="{{ $category->id }}"
-                                               id="category-{{ $category->id }}"
-                                               {{-- Cek jika kategori ini sudah terpilih untuk produk yang diedit --}}
-                                               @if(in_array($category->id, old('categories', $product->categories->pluck('id')->toArray()))) checked @endif
-                                        >
+                                        <input class="form-check-input" type="checkbox" name="categories[]"
+                                            value="{{ $category->id }}" id="category-{{ $category->id }}"
+                                            {{-- Cek jika kategori ini sudah terpilih untuk produk yang diedit --}} @if (in_array($category->id, old('categories', $product->categories->pluck('id')->toArray()))) checked @endif>
                                         <label class="form-check-label" for="category-{{ $category->id }}">
                                             {{ $category->name }}
                                         </label>
@@ -69,14 +69,34 @@
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">Harga</label>
-                            <input type="text" name="price" class="form-control" id="price" value="{{ old('price', number_format($product->price, 0, ',', '.')) }}" required>
+                            <input type="text" name="price" class="form-control" id="price"
+                                value="{{ old('price', number_format($product->price, 0, ',', '.')) }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label">Gambar Produk</label>
-                            @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="150" class="d-block mb-2 rounded">
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                    width="150" class="d-block mb-2 rounded">
                             @endif
                             <input type="file" name="image" class="form-control">
+                        </div>
+                        <h5 class="mb-3">Link Pembelian (Opsional)</h5>
+
+                        <div class="mb-3">
+                            <label for="link_shopee" class="form-label">Link Shopee</label>
+                            <input type="url" name="link_shopee" class="form-control" value="{{ old('link_shopee', $product->link_shopee) }}" placeholder="https://shopee.co.id/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_tokopedia" class="form-label">Link Tokopedia</label>
+                            <input type="url" name="link_tokopedia" class="form-control" value="{{ old('link_tokopedia', $product->link_tokopedia) }}" placeholder="https://www.tokopedia.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_fb_marketplace" class="form-label">Link Facebook Marketplace</label>
+                            <input type="url" name="link_fb_marketplace" class="form-control" value="{{ old('link_fb_marketplace', $product->link_fb_marketplace) }}" placeholder="https://www.facebook.com/marketplace/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_tanihub" class="form-label">Link TaniHub</label>
+                            <input type="url" name="link_tanihub" class="form-control" value="{{ old('link_tanihub', $product->link_tanihub) }}" placeholder="https://tanihub.com/...">
                         </div>
                         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Batal</a>
                         <button type="submit" class="btn btn-primary">Update</button>

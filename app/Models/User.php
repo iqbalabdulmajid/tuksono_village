@@ -21,6 +21,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'whatsapp_number', // Tambahkan kolom whatsapp_number
     ];
 
     /**
@@ -64,4 +65,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+
 }

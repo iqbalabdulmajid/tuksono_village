@@ -25,18 +25,15 @@
                         <i class="ti ti-bell"></i>
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-                        {{-- Konten notifikasi statis Anda bisa diletakkan di sini --}}
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
                             <h5 class="m-0">Notifications</h5>
                         </div>
                     </div>
                 </li>
 
-                {{-- 👇 [BAGIAN YANG DIPERBAIKI] Dropdown Profil Pengguna 👇 --}}
                 @auth
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                        {{-- Menggunakan service ui-avatars untuk membuat avatar dari inisial nama --}}
                         <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0D8ABC&color=fff" alt="user-image" class="user-avtar">
                         <span>{{ Auth::user()->name }}</span>
                     </a>
@@ -48,11 +45,16 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h6 class="mb-1">{{ Auth::user()->name }}</h6>
-                                    {{-- Menampilkan peran user dengan huruf kapital di awal --}}
                                     <span>{{ ucfirst(Auth::user()->role) }}</span>
                                 </div>
                             </div>
                         </div>
+
+                        {{-- Tombol Profil Baru --}}
+                        <a href="{{ route('merchant.profile.edit') }}" class="dropdown-item">
+                            <i class="ti ti-user"></i>
+                            <span>Profil</span>
+                        </a>
 
                         {{-- Tombol Logout --}}
                         <a href="{{ route('logout') }}" class="dropdown-item"
@@ -61,7 +63,6 @@
                             <span>Logout</span>
                         </a>
 
-                        {{-- Form tersembunyi untuk proses logout yang aman --}}
                         <form id="logout-form-header" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>

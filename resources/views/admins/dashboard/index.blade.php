@@ -1,7 +1,7 @@
 @extends('admins.layouts.app')
 @section('content')
 <!-- [ Main Content ] start -->
-  <div class="pc-container">
+
     <div class="pc-content">
       <!-- [ breadcrumb ] start -->
       <div class="page-header">
@@ -306,6 +306,5 @@
         </div>
       </div>
     </div>
-  </div>
   <!-- [ Main Content ] end -->
   @endsection

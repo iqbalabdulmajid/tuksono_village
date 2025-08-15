@@ -67,10 +67,35 @@
                             @endforelse
                         </div>
 
-                        <div class="d-grid gap-2 mt-4">
-                             <a href="https://wa.me/6281234567890?text=Halo,%20saya%20tertarik%20dengan%20produk%20{{ urlencode($product->name) }}" target="_blank" class="btn btn-success py-3 px-5">
-                                <i class="fab fa-whatsapp me-2"></i>Pesan via WhatsApp
-                            </a>
+                       <h5 class="mb-3">Beli Produk di:</h5>
+
+                        <div class="d-grid gap-2 mt-3">
+                            {{-- Tombol hanya akan muncul jika link-nya ada --}}
+                            @if($product->owner->whatsapp_number)
+                                <a href="https://wa.me/{{ $product->owner->whatsapp_number }}?text=Halo,%20saya%20tertarik%20dengan%20produk%20{{ urlencode($product->name) }}" target="_blank" class="btn btn-success btn-lg btn-marketplace">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> Pesan via WhatsApp
+                                </a>
+                            @endif
+                            @if($product->link_shopee)
+                                <a href="{{ $product->link_shopee }}" target="_blank" class="btn btn-lg btn-marketplace" style="background-color: #EE4D2D; color: white;">
+                                    <img src="https://seeklogo.com/images/S/shopee-logo-065D0E1629-seeklogo.com.png" alt="Shopee"> Beli di Shopee
+                                </a>
+                            @endif
+                            @if($product->link_tokopedia)
+                                <a href="{{ $product->link_tokopedia }}" target="_blank" class="btn btn-lg btn-marketplace" style="background-color: #03AC0E; color: white;">
+                                    <img src="https://seeklogo.com/images/T/tokopedia-logo-40654CC116-seeklogo.com.png" alt="Tokopedia"> Beli di Tokopedia
+                                </a>
+                            @endif
+                            @if($product->link_fb_marketplace)
+                                <a href="{{ $product->link_fb_marketplace }}" target="_blank" class="btn btn-primary btn-lg btn-marketplace">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Facebook_Marketplace_logo.svg" alt="Facebook Marketplace"> Lihat di FB Marketplace
+                                </a>
+                            @endif
+                             @if($product->link_tanihub)
+                                <a href="{{ $product->link_tanihub }}" target="_blank" class="btn btn-info btn-lg btn-marketplace text-white">
+                                    <img src="https://www.tanihub.com/img/logo-tani-hub.png" alt="TaniHub"> Beli di TaniHub
+                                </a>
+                            @endif
                              <a href="#" class="btn btn-primary py-3 px-5">
                                 <i class="fa fa-shopping-cart me-2"></i>Tambah ke Keranjang
                             </a>

@@ -59,6 +59,24 @@
                             <label for="image" class="form-label">Gambar Produk</label>
                             <input type="file" name="image" class="form-control">
                         </div>
+                        <h5 class="mb-3">Link Pembelian (Opsional)</h5>
+
+                        <div class="mb-3">
+                            <label for="link_shopee" class="form-label">Link Shopee</label>
+                            <input type="url" name="link_shopee" class="form-control" value="{{ old('link_shopee') }}" placeholder="https://shopee.co.id/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_tokopedia" class="form-label">Link Tokopedia</label>
+                            <input type="url" name="link_tokopedia" class="form-control" value="{{ old('link_tokopedia') }}" placeholder="https://www.tokopedia.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_fb_marketplace" class="form-label">Link Facebook Marketplace</label>
+                            <input type="url" name="link_fb_marketplace" class="form-control" value="{{ old('link_fb_marketplace') }}" placeholder="https://www.facebook.com/marketplace/...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_tanihub" class="form-label">Link TaniHub</label>
+                            <input type="url" name="link_tanihub" class="form-control" value="{{ old('link_tanihub') }}" placeholder="https://tanihub.com/...">
+                        </div>
                         <a href="{{ route('merchant.products.index') }}" class="btn btn-secondary">Batal</a>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>

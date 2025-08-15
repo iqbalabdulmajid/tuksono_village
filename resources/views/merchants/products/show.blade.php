@@ -1,4 +1,4 @@
-@extends('merchants.layouts.app')
+@extends('layouts.merchant')
 
 @section('title', 'Detail Produk')
 
@@ -53,6 +53,28 @@
                             <hr>
                             <h5>Deskripsi</h5>
                             <div style="white-space: pre-wrap;">{{ $product->description }}</div>
+                            <hr>
+
+                            {{-- Tombol Link Marketplace --}}
+                            <h5>Link Marketplace</h5>
+                            <div class="mt-2">
+                                @if($product->link_shopee)
+                                    <a href="{{ $product->link_shopee }}" target="_blank" class="btn btn-sm" style="background-color: #EE4D2D; color: white;">Shopee</a>
+                                @endif
+                                @if($product->link_tokopedia)
+                                    <a href="{{ $product->link_tokopedia }}" target="_blank" class="btn btn-sm" style="background-color: #03AC0E; color: white;">Tokopedia</a>
+                                @endif
+                                @if($product->link_fb_marketplace)
+                                    <a href="{{ $product->link_fb_marketplace }}" target="_blank" class="btn btn-sm btn-primary">Facebook</a>
+                                @endif
+                                @if($product->link_tanihub)
+                                    <a href="{{ $product->link_tanihub }}" target="_blank" class="btn btn-sm btn-info text-white">TaniHub</a>
+                                @endif
+                                @if(!$product->link_shopee && !$product->link_tokopedia && !$product->link_fb_marketplace && !$product->link_tanihub)
+                                    <p class="text-muted">Belum ada link marketplace yang ditambahkan.</p>
+                                @endif
+                            </div>
+
                             <hr>
                             <a href="{{ route('merchant.products.edit', $product->id) }}" class="btn btn-warning">Edit Produk</a>
                         </div>

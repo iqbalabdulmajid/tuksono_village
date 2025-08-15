@@ -80,6 +80,10 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'categories' => 'nullable|array', // Validasi kategori
             'categories.*' => 'exists:categories,id',
+            'link_shopee' => 'nullable|url',
+            'link_tokopedia' => 'nullable|url',
+            'link_fb_marketplace' => 'nullable|url',
+            'link_tanihub' => 'nullable|url',
         ]);
 
         $imagePath = null;
@@ -93,6 +97,10 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => str_replace('.', '', $request->price),
             'image' => $imagePath,
+            'link_shopee' => $request['link_shopee'],
+            'link_tokopedia' => $request['link_tokopedia'],
+            'link_fb_marketplace' => $request['link_fb_marketplace'],
+            'link_tanihub' => $request['link_tanihub'],
         ]);
 
         // Hubungkan produk dengan kategori yang dipilih
@@ -135,6 +143,10 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
+            'link_shopee' => 'nullable|url',
+            'link_tokopedia' => 'nullable|url',
+            'link_fb_marketplace' => 'nullable|url',
+            'link_tanihub' => 'nullable|url',
         ]);
 
         $imagePath = $product->image;
@@ -151,6 +163,10 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => str_replace('.', '', $request->price),
             'image' => $imagePath,
+            'link_shopee' => $request['link_shopee'],
+            'link_tokopedia' => $request['link_tokopedia'],
+            'link_fb_marketplace' => $request['link_fb_marketplace'],
+            'link_tanihub' => $request['link_tanihub'],
         ]);
 
         // Sinkronkan kategori (hapus yang lama, tambahkan yang baru)

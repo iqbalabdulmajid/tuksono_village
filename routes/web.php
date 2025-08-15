@@ -24,8 +24,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // URL: /admin/dashboard, Name: admin.dashboard
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
-    // Tambahkan route admin lainnya di sini, contoh:
-    // Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['create', 'store', 'show']);
+
     // Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
 });
 
@@ -39,6 +39,8 @@ Route::middleware(['auth', 'role:pemilik_usaha'])->prefix('merchant')->name('mer
 
     Route::get('/dashboard', [App\Http\Controllers\Merchant\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('products', App\Http\Controllers\Merchant\ProductController::class);
+    Route::get('/profile', [App\Http\Controllers\Merchant\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\Merchant\ProfileController::class, 'update'])->name('profile.update');
 
     // Tambahkan route merchant lainnya di sini
 });

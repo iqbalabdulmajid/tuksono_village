@@ -16,6 +16,10 @@ class Product extends Model
         'description',
         'price',
         'image',
+        'link_shopee',
+        'link_tokopedia',
+        'link_fb_marketplace',
+        'link_tanihub',
     ];
 
     public function owner()
