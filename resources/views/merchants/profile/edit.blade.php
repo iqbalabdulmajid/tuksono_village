@@ -74,6 +74,22 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        {{-- Field Alamat Toko --}}
+                        <div class="mb-3">
+                            <label for="alamat_toko" class="form-label">Alamat Toko</label>
+                            <input type="text" name="alamat_toko" id="alamat_toko" class="form-control @error('alamat_toko') is-invalid @enderror" value="{{ old('alamat_toko', $user->merchant->alamat_toko) }}" required>
+                            @error('alamat_toko')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        {{-- Field Deskripsi Toko --}}
+                        <div class="mb-3">
+                            <label for="deskripsi_toko" class="form-label">Deskripsi Toko</label>
+                            <textarea name="deskripsi_toko" id="deskripsi_toko" class="form-control @error('deskripsi_toko') is-invalid @enderror" rows="3">{{ old('deskripsi_toko', $user->merchant->deskripsi_toko) }}</textarea>
+                            @error('deskripsi_toko')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                         <button type="submit" class="btn btn-primary">Update Profil</button>
                     </form>

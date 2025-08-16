@@ -40,7 +40,7 @@
                                 <select name="merchant_id" class="form-select">
                                     <option value="">Semua Merchant</option>
                                     @foreach($merchants as $merchant)
-                                        <option value="{{ $merchant->id }}" @selected(request('merchant_id') == $merchant->id)>{{ $merchant->name }}</option>
+                                        <option value="{{ $merchant->id }}" @selected(request('merchant_id') == $merchant->id)>{{ $merchant->nama_toko }}</option>
                                     @endforeach
                                 </select>
                             </div>

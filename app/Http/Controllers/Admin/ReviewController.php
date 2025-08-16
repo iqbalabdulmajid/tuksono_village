@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
-use App\Models\Setting;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $latestPosts = Post::whereNotNull('published_at')
-            ->latest('published_at')
-            ->take(3)
-            ->get();
-        $settings = Setting::pluck('value', 'key')->all();
+        // Memuat relasi 'user' dan 'product' untuk efisiensi
+        $query = Review::with(['user', 'product']);
 
-        return view('users.dashboard.index', compact('latestPosts', 'settings'));
+        // Logika filter bisa ditambahkan di sini jika perlu
+
+        $reviews = $query->latest()->paginate(10)->appends($request->query());
+
+        return view('admins.reviews.index', compact('reviews'));
     }
 
     /**
@@ -66,8 +66,10 @@ class DashboardController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Review $review)
     {
-        //
+        $review->delete();
+
+        return redirect()->route('admin.reviews.index')->with('success', 'Ulasan berhasil dihapus.');
     }
 }

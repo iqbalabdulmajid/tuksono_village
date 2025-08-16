@@ -3,7 +3,7 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="{{ route('merchant.dashboard') }}" class="b-brand text-primary">
-                <img src="{{ asset('assets/images/logo-dark.svg') }}" class="img-fluid logo-lg" alt="logo">
+                Tuksono Center
                 <span class="badge bg-light-success rounded-pill ms-2">Merchant</span>
             </a>
         </div>
@@ -29,18 +29,18 @@
                         <span class="pc-mtext">Produk Saya</span>
                     </a>
                 </li>
-                <li class="pc-item">
+                {{-- <li class="pc-item">
                     <a href="#" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
                         <span class="pc-mtext">Pesanan</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="pc-item pc-caption">
                     <label>Akun</label>
                 </li>
                 <li class="pc-item">
-                    <a href="#" class="pc-link">
+                    <a href="{{ route('merchant.profile.edit') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-settings"></i></span>
                         <span class="pc-mtext">Pengaturan Toko</span>
                     </a>

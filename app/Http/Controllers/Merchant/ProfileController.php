@@ -28,6 +28,8 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'nama_toko' => 'required|string|max:255',
+            'alamat_toko' => 'required|string|max:255',
+            'deskripsi_toko' => 'nullable|string|max:1000',
             'whatsapp_number' => 'nullable|string|max:20|regex:/^62\d+$/',
         ], [
             'whatsapp_number.regex' => 'Format nomor WhatsApp salah. Awali dengan 62 dan hanya berisi angka.'
@@ -37,6 +39,8 @@ class ProfileController extends Controller
         $user->update([
             'name' => $request->name,
             'whatsapp_number' => $request->whatsapp_number,
+            'alamat_toko' => $request->alamat_toko,
+            'deskripsi_toko' => $request->deskripsi_toko,
         ]);
 
         // Perbarui data di tabel merchants melalui relasi
@@ -44,6 +48,8 @@ class ProfileController extends Controller
             $user->merchant->update([
                 'nama_toko' => $request->nama_toko,
                 'slug' => Str::slug($request->nama_toko),
+                'alamat_toko' => $request->alamat_toko,
+                'deskripsi_toko' => $request->deskripsi_toko,
             ]);
         }
 

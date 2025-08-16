@@ -2,7 +2,8 @@
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
         <a href="index.html" class="navbar-brand p-0">
-            <h1 class="m-0"><img src="{{ asset('img/logo.png') }}"  alt="Logo" class="img-fluid" style="max-height: 70px"></h1>
+            <h1 class="m-0"><img src="{{ asset('img/logo.png') }}" alt="Logo" class="img-fluid"
+                    style="max-height: 70px"></h1>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="fa fa-bars"></span>
@@ -40,10 +41,13 @@
                             <a href="{{ route('admin.dashboard') }}" class="dropdown-item">Admin Dashboard</a>
                         @endif
                         {{-- Tambahkan link untuk peran lain jika perlu --}}
-                        {{-- @if (Auth::user()->isPemilikUsaha())
-                <a href="{{ route('owner.dashboard') }}" class="dropdown-item">Owner Dashboard</a>
-            @endif --}}
-                        <a href="#" class="dropdown-item">Profil Saya</a>
+                        @if (Auth::user()->isPemilikUsaha())
+                            <a href="{{ route('merchant.dashboard') }}" class="dropdown-item">Owner Dashboard</a>
+                        @endif
+                        @if (Auth::user()->isPemilikUsaha())
+                            <a href="{{ route('merchant.profile.edit') }}" class="dropdown-item">Profil Saya</a>
+                        @endif
+
                         <hr class="dropdown-divider">
 
                         {{-- Tombol Logout harus menggunakan form --}}

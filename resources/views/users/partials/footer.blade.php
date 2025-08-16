@@ -6,67 +6,39 @@
                 <div class="row gx-5">
                     <div class="col-lg-4 col-md-12 pt-5 mb-5">
                         <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                            <h3 class="text-light mb-0">Get In Touch</h3>
+                            <h3 class="text-light mb-0">Hubungi Kami</h3>
                         </div>
                         <div class="d-flex mb-2">
                             <i class="bi bi-geo-alt text-primary me-2"></i>
-                            <p class="mb-0">123 Street, New York, USA</p>
+                            <p class="mb-0">Tuksono, Sentolo, Kulon Progo</p>
                         </div>
                         <div class="d-flex mb-2">
                             <i class="bi bi-envelope-open text-primary me-2"></i>
-                            <p class="mb-0">info@example.com</p>
+                            {{-- Menampilkan email dari pengaturan --}}
+                            <p class="mb-0">{{ $settings['email'] ?? 'info@desa.id' }}</p>
                         </div>
                         <div class="d-flex mb-2">
                             <i class="bi bi-telephone text-primary me-2"></i>
-                            <p class="mb-0">+012 345 67890</p>
+                            {{-- Menampilkan nomor telepon dari pengaturan --}}
+                            <p class="mb-0">{{ $settings['phone_number'] ?? '(0274) 123 456' }}</p>
                         </div>
                         <div class="d-flex mt-4">
-                            <a class="btn btn-primary btn-square me-2" href="#"><i
-                                    class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-primary btn-square me-2" href="#"><i
-                                    class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-primary btn-square me-2" href="#"><i
-                                    class="fab fa-linkedin-in fw-normal"></i></a>
-                            <a class="btn btn-primary btn-square" href="#"><i
-                                    class="fab fa-instagram fw-normal"></i></a>
+                            {{-- Nanti bisa diisi dengan link media sosial dari settings --}}
+                            <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                            <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                            <a class="btn btn-primary btn-square" href="#"><i class="fab fa-instagram fw-normal"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
                         <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                            <h3 class="text-light mb-0">Quick Links</h3>
+                            <h3 class="text-light mb-0">Tautan Cepat</h3>
                         </div>
                         <div class="link-animated d-flex flex-column justify-content-start">
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Home</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>About Us</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Our Services</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Meet The Team</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Latest Blog</a>
-                            <a class="text-light" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Contact Us</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
-                        <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                            <h3 class="text-light mb-0">Popular Links</h3>
-                        </div>
-                        <div class="link-animated d-flex flex-column justify-content-start">
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Home</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>About Us</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Our Services</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Meet The Team</a>
-                            <a class="text-light mb-2" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Latest Blog</a>
-                            <a class="text-light" href="#"><i
-                                    class="bi bi-arrow-right text-primary me-2"></i>Contact Us</a>
+                            <a class="text-light mb-2" href="{{ route('home') }}"><i class="bi bi-arrow-right text-primary me-2"></i>Home</a>
+                            <a class="text-light mb-2" href="{{ route('about') }}"><i class="bi bi-arrow-right text-primary me-2"></i>Tentang Kami</a>
+                            <a class="text-light mb-2" href="{{ route('product') }}"><i class="bi bi-arrow-right text-primary me-2"></i>Produk UMKM</a>
+                            <a class="text-light mb-2" href="{{ route('blog.index') }}"><i class="bi bi-arrow-right text-primary me-2"></i>Berita Desa</a>
+                            <a class="text-light" href="{{ route('contact') }}"><i class="bi bi-arrow-right text-primary me-2"></i>Kontak</a>
                         </div>
                     </div>
                 </div>
@@ -79,7 +51,8 @@
         <div class="row justify-content-end">
             <div class="col-lg-8 col-md-6">
                 <div class="d-flex align-items-center justify-content-center" style="height: 75px;">
-
+                    <p class="mb-0">&copy; <a class="text-white border-bottom" href="#">Desa Tuksono</a>. All Rights Reserved. </p>
+                </div>
             </div>
         </div>
     </div>

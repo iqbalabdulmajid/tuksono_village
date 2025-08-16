@@ -17,7 +17,7 @@ Route::controller(App\Http\Controllers\User\BlogController::class)->prefix('blog
     // URL: /blog/{slug-artikel}
     // Nama: blog.show
     Route::get('/{post:slug}', 'show')->name('show');
-});// Route::get('/product/show', [App\Http\Controllers\User\ProductController::class, 'show'])->name('product.show');
+}); // Route::get('/product/show', [App\Http\Controllers\User\ProductController::class, 'show'])->name('product.show');
 Route::get('/contact', [App\Http\Controllers\User\ContactController::class, 'index'])->name('contact');
 Route::controller(App\Http\Controllers\User\ProductController::class)->prefix('product')->name('product.')->group(function () {
     Route::get('/{product}', 'show')->name('show');
@@ -25,6 +25,7 @@ Route::controller(App\Http\Controllers\User\ProductController::class)->prefix('p
 Route::post('/register/merchant', [App\Http\Controllers\Auth\RegisterController::class, 'createMerchant'])->name('register.merchant');
 Route::get('/store/{slug}', [App\Http\Controllers\User\MerchantController::class, 'showAllProducts'])->name('merchant.show');
 Route::post('/comments', [App\Http\Controllers\User\CommentController::class, 'store'])->name('comments.store')->middleware('auth');
+Route::post('/reviews', [App\Http\Controllers\User\ReviewController::class, 'store'])->name('reviews.store')->middleware('auth');
 
 
 // =====================================================================
@@ -37,7 +38,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['create', 'store', 'show']);
     Route::resource('posts', App\Http\Controllers\Admin\PostController::class); // <-- TAMBAHKAN INI
-    // Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
+    Route::resource('perangkat', App\Http\Controllers\Admin\PerangkatController::class);
+    Route::resource('reviews', App\Http\Controllers\Admin\ReviewController::class);
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
 });
 
 
@@ -55,5 +59,3 @@ Route::middleware(['auth', 'role:pemilik_usaha'])->prefix('merchant')->name('mer
 
     // Tambahkan route merchant lainnya di sini
 });
-
-

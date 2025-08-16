@@ -96,6 +96,8 @@ class ProductController extends Controller
         if ($product->merchant_id !== Auth::user()->merchant->id) {
             abort(403, 'ANDA TIDAK MEMILIKI AKSES.');
         }
+        $product->load(['categories', 'reviews.user']);
+
 
         return view('merchants.products.show', compact('product'));
     }

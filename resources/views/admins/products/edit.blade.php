@@ -36,11 +36,11 @@
                                 value="{{ old('name', $product->name) }}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="user_id" class="form-label">Pemilik / Merchant</label>
-                            <select name="user_id" id="user_id" class="form-select" required>
+                            <label for="merchant_id" class="form-label">Pemilik / Merchant</label>
+                            <select name="merchant_id" id="merchant_id" class="form-select" required>
                                 <option value="">Pilih Merchant</option>
                                 @foreach ($merchants as $merchant)
-                                    <option value="{{ $merchant->id }}" @selected(old('user_id', $product->user_id) == $merchant->id)>{{ $merchant->name }}
+                                    <option value="{{ $merchant->id }}" @selected(old('merchant_id', $product->merchant_id) == $merchant->id)>{{ $merchant->nama_toko }}
                                     </option>
                                 @endforeach
                             </select>

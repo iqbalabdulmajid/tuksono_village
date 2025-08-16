@@ -38,20 +38,20 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-{
-    // Memuat relasi owner dan merchant sekaligus untuk menghindari N+1 problem
-    $product->load('owner.merchant', 'categories');
-    // dd($product->owner->merchant);
-    // Ambil produk serupa dari merchant yang sama
-    $similarProducts = collect();
-    if ($product->owner->merchant) {
-        $similarProducts = Product::where('id', '!=', $product->id)
-            ->where('id', $product->owner->merchant->id)
-            ->inRandomOrder()
-            ->limit(3)
-            ->get();
-    }
+    {
+        // Memuat relasi owner, merchant, kategori, dan ulasan sekaligus
+        $product->load(['owner.merchant', 'categories', 'reviews.user']);
 
-    return view('users.product.show', compact('product', 'similarProducts'));
-}
+        // Ambil produk serupa dari merchant yang sama
+        $similarProducts = collect();
+        if ($product->owner && $product->owner->merchant) {
+            $similarProducts = Product::where('id', '!=', $product->id)
+                ->where('user_id', $product->owner->id) // Filter by the same owner/user
+                ->inRandomOrder()
+                ->limit(3)
+                ->get();
+        }
+
+        return view('users.product.show', compact('product', 'similarProducts'));
+    }
 }

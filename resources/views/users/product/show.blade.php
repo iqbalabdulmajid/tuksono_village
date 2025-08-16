@@ -123,14 +123,28 @@
                         <h1 class="mb-3">{{ $product->name }}</h1>
                         <h2 class="text-primary mb-3">Rp {{ number_format($product->price, 0, ',', '.') }}</h2>
 
-                        {{-- Rating Summary --}}
+                        {{-- Dynamic Rating Summary --}}
                         <div class="d-flex mb-3">
+                            @php
+                                $averageRating = $product->reviews->avg('rating');
+                                $fullStars = floor($averageRating);
+                                $halfStar = $averageRating - $fullStars >= 0.5;
+                                $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                            @endphp
                             <div class="star-rating me-2">
-                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i
-                                    class="fa fa-star"></i><i class="fa fa-star-half-alt"></i>
+                                @for ($i = 0; $i < $fullStars; $i++)
+                                    <i class="fa fa-star"></i>
+                                @endfor
+                                @if ($halfStar)
+                                    <i class="fa fa-star-half-alt"></i>
+                                @endif
+                                @for ($i = 0; $i < $emptyStars; $i++)
+                                    <i class="far fa-star"></i>
+                                @endfor
                             </div>
-                            <span>(Placeholder: 12 Ulasan)</span>
+                            <span>({{ $product->reviews->count() }} Ulasan)</span>
                         </div>
+
 
                         <div class="mb-4">
                             <strong>Kategori:</strong>
@@ -209,11 +223,12 @@
                 <div class="row g-5 mt-4">
                     <div class="col-12">
                         <h2 class="mb-4">Ulasan & Rating</h2>
-                        {{-- Form untuk Memberi Ulasan (Hanya untuk user yang login) --}}
+
+                        {{-- Review Submission Form --}}
                         @auth
                             <div class="add-review bg-light p-4 rounded mb-5">
                                 <h4 class="mb-4">Tulis Ulasan Anda</h4>
-                                <form action="#" method="POST">
+                                <form action="{{ route('reviews.store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <div class="row g-3">
@@ -244,6 +259,29 @@
                                 <a href="{{ route('login') }}">Login</a> untuk memberikan ulasan.
                             </div>
                         @endauth
+
+                        <div class="review-list">
+                            @forelse ($product->reviews as $review)
+                                <div class="review-item d-flex">
+                                    <div class="review-avatar me-3">{{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="mb-1">{{ $review->user->name }}</h5>
+                                            <small>{{ $review->created_at->format('d M Y') }}</small>
+                                        </div>
+                                        <div class="star-rating mb-2">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="{{ $i <= $review->rating ? 'fa fa-star' : 'far fa-star' }}"></i>
+                                            @endfor
+                                        </div>
+                                        <p>{{ $review->comment }}</p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p>Jadilah yang pertama memberikan ulasan untuk produk ini.</p>
+                            @endforelse
+                        </div>
 
                         {{-- Daftar Ulasan yang Sudah Ada --}}
                         <div class="review-list">

@@ -3,7 +3,7 @@
         <div class="m-header">
             {{-- Link logo mengarah ke dashboard admin --}}
             <a href="{{ route('admin.dashboard') }}" class="b-brand text-primary">
-                <img src="{{ asset('assets/images/logo-dark.svg') }}" class="img-fluid logo-lg" alt="logo">
+                Tuksono Center
                 <span class="badge bg-light-primary rounded-pill ms-2">Admin</span>
             </a>
         </div>
@@ -36,9 +36,15 @@
                 </li>
                 <li class="pc-item">
                     {{-- Fitur belum dibuat, jadi href="#" --}}
-                    <a href="#" class="pc-link">
+                    <a href="{{ route('admin.reviews.index') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-message-2"></i></span>
                         <span class="pc-mtext">Ulasan</span>
+                    </a>
+                </li>
+                <li class="pc-item">
+                    <a href="{{ route('admin.perangkat.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-user"></i></span>
+                        <span class="pc-mtext">Perangkat Desa</span>
                     </a>
                 </li>
                 <li class="pc-item">
@@ -66,7 +72,7 @@
                 </li>
                 <li class="pc-item">
                     {{-- Fitur belum dibuat, jadi href="#" --}}
-                    <a href="#" class="pc-link">
+                    <a href="{{ route('admin.settings.index') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-settings"></i></span>
                         <span class="pc-mtext">Pengaturan Website</span>
                     </a>
