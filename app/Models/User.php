@@ -80,4 +80,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+    public function bankAccounts()
+    {
+        return $this->hasMany(BankAccount::class);
+    }
 }

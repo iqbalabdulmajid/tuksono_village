@@ -29,12 +29,19 @@
                         <span class="pc-mtext">Produk Saya</span>
                     </a>
                 </li>
-                {{-- <li class="pc-item">
-                    <a href="#" class="pc-link">
+                <li class="pc-item">
+                    <a href="{{ route('merchant.orders.index') }}" class="pc-link {{ Route::is('merchant.orders.*') ? 'active' : '' }}">
                         <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
                         <span class="pc-mtext">Pesanan</span>
                     </a>
-                </li> --}}
+                </li>
+
+                <li class="pc-item">
+                    <a href="{{ route('merchant.bank-accounts.index') }}" class="pc-link {{ Route::is('merchant.bank-accounts.*') ? 'active' : '' }}">
+                        <span class="pc-micon"><i class="ti ti-credit-card"></i></span>
+                        <span class="pc-mtext">Rekening Bank</span>
+                    </a>
+                </li>
 
                 <li class="pc-item pc-caption">
                     <label>Akun</label>

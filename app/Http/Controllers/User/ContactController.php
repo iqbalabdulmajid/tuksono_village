@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -12,7 +13,9 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return view('users.contact.index');
+        $settings = Setting::pluck('value', 'key')->all();
+
+        return view('users.contact.index', compact('settings'));
     }
 
     /**

@@ -26,6 +26,7 @@ Route::post('/register/merchant', [App\Http\Controllers\Auth\RegisterController:
 Route::get('/store/{slug}', [App\Http\Controllers\User\MerchantController::class, 'showAllProducts'])->name('merchant.show');
 Route::post('/comments', [App\Http\Controllers\User\CommentController::class, 'store'])->name('comments.store')->middleware('auth');
 Route::post('/reviews', [App\Http\Controllers\User\ReviewController::class, 'store'])->name('reviews.store')->middleware('auth');
+Route::post('/order', [App\Http\Controllers\User\OrderController::class, 'store'])->name('order.store');
 
 
 // =====================================================================
@@ -56,6 +57,8 @@ Route::middleware(['auth', 'role:pemilik_usaha'])->prefix('merchant')->name('mer
     Route::resource('products', App\Http\Controllers\Merchant\ProductController::class);
     Route::get('/profile', [App\Http\Controllers\Merchant\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [App\Http\Controllers\Merchant\ProfileController::class, 'update'])->name('profile.update');
-
-    // Tambahkan route merchant lainnya di sini
+    Route::resource('bank-accounts', App\Http\Controllers\Merchant\BankAccountController::class);
+    Route::get('/orders', [App\Http\Controllers\Merchant\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [App\Http\Controllers\Merchant\OrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{order}/status', [App\Http\Controllers\Merchant\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });

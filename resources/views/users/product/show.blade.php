@@ -155,46 +155,101 @@
                             @endforelse
                         </div>
 
-                        <h5 class="mb-3">Beli Produk di:</h5>
+                        <h5 class="mb-3">Pesan Produk Ini:</h5>
                         <div class="d-grid gap-2 mt-3">
-                            {{-- Tombol hanya akan muncul jika link-nya ada --}}
+                            {{-- Tombol-tombol ini sekarang akan membuka modal --}}
                             @if ($product->owner->whatsapp_number)
-                                <a href="https://wa.me/{{ $product->owner->whatsapp_number }}?text=Halo,%20saya%20tertarik%20dengan%20produk%20{{ urlencode($product->name) }}"
-                                    target="_blank" class="btn btn-success btn-lg btn-marketplace">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                                        alt="WhatsApp"> Pesan via WhatsApp
-                                </a>
+                                <button class="btn btn-success btn-lg order-btn" data-platform="WhatsApp"
+                                    data-link="https://wa.me/{{ $product->owner->whatsapp_number }}?text=Halo,%20saya%20tertarik%20dengan%20produk%20{{ urlencode($product->name) }}">Pesan
+                                    via WhatsApp</button>
                             @endif
                             @if ($product->link_shopee)
-                                <a href="{{ $product->link_shopee }}" target="_blank" class="btn btn-lg btn-marketplace"
-                                    style="background-color: #EE4D2D; color: white;">
-                                    <img src="https://seeklogo.com/images/S/shopee-logo-065D0E1629-seeklogo.com.png"
-                                        alt="Shopee"> Beli di Shopee
-                                </a>
+                                <button class="btn btn-lg order-btn" style="background-color: #EE4D2D; color: white;"
+                                    data-platform="Shopee" data-link="{{ $product->link_shopee }}">Beli di Shopee</button>
                             @endif
                             @if ($product->link_tokopedia)
-                                <a href="{{ $product->link_tokopedia }}" target="_blank" class="btn btn-lg btn-marketplace"
-                                    style="background-color: #03AC0E; color: white;">
-                                    <img src="https://seeklogo.com/images/T/tokopedia-logo-40654CC116-seeklogo.com.png"
-                                        alt="Tokopedia"> Beli di Tokopedia
-                                </a>
+                                <button class="btn btn-lg order-btn" style="background-color: #03AC0E; color: white;"
+                                    data-platform="Tokopedia" data-link="{{ $product->link_tokopedia }}">Beli di
+                                    Tokopedia</button>
                             @endif
                             @if ($product->link_fb_marketplace)
-                                <a href="{{ $product->link_fb_marketplace }}" target="_blank"
-                                    class="btn btn-primary btn-lg btn-marketplace">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Facebook_Marketplace_logo.svg"
-                                        alt="Facebook Marketplace"> Lihat di FB Marketplace
-                                </a>
+                                <button class="btn btn-lg order-btn" style="background-color: #3B5998; color: white;"
+                                    data-platform="Facebook Marketplace"
+                                    data-link="{{ $product->link_fb_marketplace }}">Beli di Facebook
+                                    Marketplace</button>
                             @endif
                             @if ($product->link_tanihub)
-                                <a href="{{ $product->link_tanihub }}" target="_blank"
-                                    class="btn btn-info btn-lg btn-marketplace text-white">
-                                    <img src="https://www.tanihub.com/img/logo-tani-hub.png" alt="TaniHub"> Beli di TaniHub
-                                </a>
+                                <button class="btn btn-lg order-btn" style="background-color: #4CAF50; color: white;"
+                                    data-platform="Tanihub" data-link="{{ $product->link_tanihub }}">Beli di
+                                    Tanihub</button>
                             @endif
-                            <a href="#" class="btn btn-primary py-3 px-5">
-                                <i class="fa fa-shopping-cart me-2"></i>Tambah ke Keranjang
-                            </a>
+                            <button class="btn btn-primary btn-lg order-btn" data-platform="Manual" data-link="#">Beli
+                                Langsung (Upload Bukti Bayar)</button>
+                        </div>
+                    </div>
+
+                    <!-- Order Modal -->
+                    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="orderModalLabel">Konfirmasi Pesanan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('order.store') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="platform" id="platformInput">
+                                    <div class="modal-body">
+                                        <p>Silakan isi data di bawah ini untuk melanjutkan. Merchant akan segera menghubungi
+                                            Anda.</p>
+                                        <div class="mb-3">
+                                            <label for="customer_name" class="form-label">Nama Lengkap</label>
+                                            <input type="text" name="customer_name" class="form-control"
+                                                value="{{ auth()->user()->name ?? '' }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="customer_phone" class="form-label">Nomor Telepon/WA</label>
+                                            <input type="text" name="customer_phone" class="form-control"
+                                                value="{{ auth()->user()->whatsapp_number ?? '' }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="quantity" class="form-label">Jumlah</label>
+                                            <input type="number" name="quantity" class="form-control" value="1"
+                                                min="1" required>
+                                        </div>
+                                        <div class="mb-3" id="paymentProofSection" style="display: none;">
+                                            <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
+                                            <input type="file" name="payment_proof" class="form-control">
+
+                                            {{-- PERBAIKAN: Teks rekening dinamis --}}
+                                            @php
+                                                $bankAccount = $product->owner->bankAccounts->first();
+                                            @endphp
+                                            @if ($bankAccount)
+                                                <div class="form-text">
+                                                    Silakan transfer ke rekening
+                                                    <strong>{{ $bankAccount->bank_name }}</strong>
+                                                    dengan nomor <strong>{{ $bankAccount->account_number }}</strong>
+                                                    a.n. <strong>{{ $bankAccount->account_holder_name }}</strong>
+                                                    dan upload bukti di sini.
+                                                </div>
+                                            @else
+                                                <div class="form-text text-danger">Informasi rekening merchant belum
+                                                    tersedia.</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-primary"
+                                            id="submitOrderBtn">Lanjutkan</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
@@ -209,7 +264,8 @@
                                     <i class="fas fa-badge-check text-primary" title="Toko Terverifikasi"></i>
                                 @endif
                             </div>
-                            <p class="text-muted">{{ $product->owner->merchant->deskripsi_toko ?? 'Belum ada deskripsi.' }}
+                            <p class="text-muted">
+                                {{ $product->owner->merchant->deskripsi_toko ?? 'Belum ada deskripsi.' }}
                             </p>
                             <a href="{{ route('merchant.show', $product->owner->merchant->slug) }}"
                                 class="btn btn-outline-primary">Lihat Semua Produk Toko Ini <i
@@ -351,3 +407,60 @@
             </div>
         </div>
     @endsection
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                const platformInput = document.getElementById('platformInput');
+                const paymentProofSection = document.getElementById('paymentProofSection');
+                const submitOrderBtn = document.getElementById('submitOrderBtn');
+                let redirectLink = '#';
+
+                document.querySelectorAll('.order-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const platform = this.dataset.platform;
+                        redirectLink = this.dataset.link;
+
+                        platformInput.value = platform;
+                        document.getElementById('orderModalLabel').innerText =
+                            'Konfirmasi Pesanan via ' + platform;
+
+                        if (platform === 'Manual') {
+                            paymentProofSection.style.display = 'block';
+                            submitOrderBtn.innerText = 'Kirim Pesanan';
+                        } else {
+                            paymentProofSection.style.display = 'none';
+                            submitOrderBtn.innerText = 'Lanjutkan ke ' + platform;
+                        }
+                        orderModal.show();
+                    });
+                });
+
+                document.querySelector('#orderModal form').addEventListener('submit', function(e) {
+                    if (platformInput.value !== 'Manual') {
+                        e.preventDefault();
+                        const form = e.target;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                                'Accept': 'application/json',
+                            }
+                        }).then(response => {
+                            if (response.ok) {
+                                window.open(redirectLink, '_blank');
+                                orderModal.hide();
+                            } else {
+                                alert('Terjadi kesalahan. Silakan coba lagi.');
+                            }
+                        }).catch(error => {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan. Silakan coba lagi.');
+                        });
+                    }
+                });
+            });
+        </script>
+    @endpush
